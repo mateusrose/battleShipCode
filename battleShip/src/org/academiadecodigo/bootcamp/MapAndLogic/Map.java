@@ -21,7 +21,11 @@ public class Map {
     }
     public Map(){
         for (int i = 0; i < X.length ; i++) {
-            x
+            X[i]= false;
+            for (int j = 1; j < Y.length ; j++) {
+                Y[j]= false;
+
+            }
         }
     }
 }
