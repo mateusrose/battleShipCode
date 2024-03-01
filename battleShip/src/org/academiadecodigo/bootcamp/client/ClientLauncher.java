@@ -7,7 +7,7 @@ import java.io.IOException;
 public class ClientLauncher {
     public static void main(String[] args) {
         try {
-            Client client = new Client("localhost", ServerLauncher.DEFAULT_PORT);
+            Player client = new Player("localhost", ServerLauncher.DEFAULT_PORT);
             client.start();
 
         } catch (IOException e) {
