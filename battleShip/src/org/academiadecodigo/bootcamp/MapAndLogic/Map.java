@@ -1,31 +1,34 @@
 package org.academiadecodigo.bootcamp.MapAndLogic;
 
 public class Map {
-    private boolean[] X = new boolean[10];
-    private boolean[] Y = new boolean[10];
+    private boolean[][] position = new boolean[10][10];
 
-    public boolean[] getX() {
-        return X;
+    public boolean[][] getPos() {
+        return position;
     }
 
-    public void setX(boolean[] x) {
-        X = x;
-    }
-
-    public boolean[] getY() {
-        return Y;
-    }
-
-    public void setY(boolean[] y) {
-        Y = y;
+    public void setPosition(boolean[][] x) {
+        position = x;
     }
     public Map(){
-        for (int i = 0; i < X.length ; i++) {
-            X[i]= false;
-            for (int j = 1; j < Y.length ; j++) {
-                Y[j]= false;
+        for (int i = 0; i < position.length ; i++) {
+            for (int j = 0; j < position.length; j++) {
+                position[i][j]= false;
+            }
 
             }
         }
+    public void getArray(){
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                System.out.println("array "+position[i][j]);
+            }
+
+        }
+    }
+
+    public static void main(String[] args) {
+        Map map = new Map();
+        map.getArray();
     }
 }
