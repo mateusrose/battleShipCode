@@ -14,6 +14,7 @@ public class ClientConnection implements Runnable {
     private Server server;
     private String name;
     private PrintWriter out;
+    //private Player player;
 
     public ClientConnection(Socket socket, Server server, String name) {
         this.socket = socket;
