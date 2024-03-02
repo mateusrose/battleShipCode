@@ -3,94 +3,47 @@ package org.academiadecodigo.bootcamp.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
+    ServerSocket socket;
+    Socket clientSocket;
+    private List<ClientHandler> clientList;
+    public static final int DEFAULT_PORT = 9999;
+    public static final int MAX_CLIENTS = 2;
+    private ExecutorService executor;
 
-    private static final String DEFAULT_NAME = "cadet-";
-    private static final int MAXIMUM_CLIENTS = 306;
 
-    private ServerSocket socket;
-    private ExecutorService service;
-    private final List<ClientConnection> clients;
-
-    public Server(int port) throws IOException {
-        socket = new ServerSocket(port);
-        clients = Collections.synchronizedList(new LinkedList<>());
-        service = Executors.newCachedThreadPool();
+    public Server() throws IOException {
+        clientList = new LinkedList<>();
+        socket = new ServerSocket(DEFAULT_PORT);
+        executor = Executors.newFixedThreadPool(2);
+        System.out.println("Server Started");
     }
 
-    public void start() {
-        int connections = 0;
+    public void waitForConnections() throws IOException {
+        ClientHandler clientHandler;
 
-        while (true) {
-            waitConnection(connections);
-            connections++;
-        }
+        System.out.println("Waiting for client");
+
+        clientSocket = socket.accept();
+        System.out.println("Client Connected");
+        Thread clientThread = new Thread(clientHandler = new ClientHandler(clientSocket, this));
+        clientList.add(clientHandler);
+        executor.submit(clientThread);
+
     }
 
-    private void waitConnection(int connections) {
-        try {
-            Socket clientSocket = socket.accept();
+    public void start() throws IOException {
 
-            ClientConnection connection = new ClientConnection(clientSocket, this, DEFAULT_NAME + connections);
-            service.submit(connection);
-
-        } catch (IOException e) {
-            System.err.println("Error establishing connection: " + e.getMessage());
-        }
-    }
-
-    public boolean addClient(ClientConnection client) {
-        synchronized (clients) {
-
-            if (clients.size() >= MAXIMUM_CLIENTS) {
-                return false;
-            }
-
-            broadcast(client.getName() + " " + Messages.JOIN_ALERT);
-            clients.add(client);
-            return true;
-        }
-    }
-
-    public void broadcast(String message) {
-        synchronized (clients) {
-            for (ClientConnection client : clients) {
-                client.send(message);
-            }
-        }
-    }
-
-    public void remove(ClientConnection client) {
-        clients.remove(client);
-    }
-
-    public String listClients() {
-        StringBuilder list = new StringBuilder("Connected Clients:\n");
-
-        synchronized (clients) {
-            for (ClientConnection client : clients) {
-                list.append(client.getName()).append("\n");
-            }
+        while (clientList.size() < MAX_CLIENTS) {
+            waitForConnections();
         }
 
-        return list.toString();
-    }
-
-    public ClientConnection getClientByName(String name) {
-        synchronized (clients) {
-            for (ClientConnection client : clients) {
-                if (client.getName().equals(name)) {
-                    return client;
-                }
-            }
+            //clientListReady todos true -->)
         }
 
-        return null;
     }
-}
