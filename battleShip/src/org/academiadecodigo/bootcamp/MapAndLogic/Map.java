@@ -13,24 +13,15 @@ public class Map {
     private int playerShips;
     private Player player;
     private LinkedList<Cell> cellList;
-
-    private String[][] grid = new String[numRows][numCols];
     private int[][] missedguesses = new int[numRows][numCols];
     StringBuilder gridRepresentation = new StringBuilder();
 
-    public String[][] getPos() {
-        return grid;
-    }
-
-    public void setGrid(String[][] x) {
-        grid = x;
-    }
 
     public Map(Player player) throws IOException {
         this.player = player;
         cellList = new LinkedList<>();
         printOceanMap();
-        // deployPlayerShips();
+        deployPlayerShips();
     }
 
 
@@ -40,11 +31,11 @@ public class Map {
         for (int i = 0; i < numCols; i++) {
             if (i == 0) {
                 gridRepresentation.append("  ");
-
             }
-            gridRepresentation.append("   ").append(i);
+            gridRepresentation.append("  ").append(i);
         }
 
+        gridRepresentation.append("\n");
         gridRepresentation.append("\n");
 
         int cellCount = 0;
@@ -54,14 +45,12 @@ public class Map {
                 cellList.add(new Cell(i, j));
                 System.out.println("we here i" + i);
                 System.out.println("we here j" + j);
-
                 String state = cellList.get(cellCount).getState();
                 System.out.println(cellList.get(cellCount).getState());
-
-                gridRepresentation.append(cellList.get(cellCount).getState());
+                // gridRepresentation.append(cellList.get(cellCount).getState());
                 if (j == 0) {
                     gridRepresentation.append(i).append("| ").append(state);
-                } else if (j == grid[i].length - 1) {
+                } else if (j == numRows - 1) {
                     gridRepresentation.append(state).append(" |").append(i).append("\n");
                 } else {
                     gridRepresentation.append(state);
@@ -76,33 +65,34 @@ public class Map {
             if (i == 0) {
                 gridRepresentation.append(" ");
             }
-            gridRepresentation.append("   ").append(i);
+            gridRepresentation.append("  ").append(i);
         }
         gridRepresentation.append("\n");
         player.getClientHandler().getOutputFromServer().println(gridRepresentation);
         player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
 
     }
+
     public void updateOceanMap() throws IOException {
         gridRepresentation.append("\n");
-
         for (int i = 0; i < numCols; i++) {
             if (i == 0) {
                 gridRepresentation.append("  ");
-
             }
-            gridRepresentation.append("   ").append(i);
+            gridRepresentation.append("  ").append(i);
         }
+
         gridRepresentation.append("\n");
+        gridRepresentation.append("\n");
+
         int cellCount = 0;
+
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
                 String state = cellList.get(cellCount).getState();
-                System.out.println(cellList.get(cellCount).getState());
-                gridRepresentation.append(cellList.get(cellCount).getState());
                 if (j == 0) {
                     gridRepresentation.append(i).append("| ").append(state);
-                } else if (j == grid[i].length - 1) {
+                } else if (j == numRows - 1) {
                     gridRepresentation.append(state).append(" |").append(i).append("\n");
                 } else {
                     gridRepresentation.append(state);
@@ -117,13 +107,15 @@ public class Map {
             if (i == 0) {
                 gridRepresentation.append(" ");
             }
-            gridRepresentation.append("   ").append(i);
+            gridRepresentation.append("  ").append(i);
         }
         gridRepresentation.append("\n");
         player.getClientHandler().getOutputFromServer().println(gridRepresentation);
         player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
 
     }
+
+
     public void deployPlayerShips() throws IOException {
         //  Scanner input = new Scanner(System.in);
 
@@ -144,15 +136,25 @@ public class Map {
             int y = Integer.parseInt(player.getClientHandler().getInputFromServer().readLine());
             System.out.println(y);
 
-            if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (Objects.equals(grid[x][y], " "))) {
-                grid[x][y] = " X ";
-
-            } else if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && Objects.equals(grid[x][y], "X"))
+            if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (!cellList.get(xyToIndex(x, y)).isShip())) {
+                cellList.get(xyToIndex(x, y)).setState(" O ");
+                cellList.get(xyToIndex(x, y)).setShip(true);
+            } else if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (cellList.get(xyToIndex(x, y)).isShip()))
                 player.getClientHandler().getOutputFromServer().println("You can't place two or more ships on the same location");
             else if ((x < 0 || x >= numRows) || (y < 0 || y >= numCols))
                 player.getClientHandler().getOutputFromServer().println("You can't place ships outside the " + numRows + " by " + numCols + " grid");
         }
-        printOceanMap();
+        updateOceanMap();
+    }
+
+    public int xyToIndex(int x, int y) {
+        int index = 0;
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                index++;
+            }
+        }
+        return index;
     }
 
     public static void main(String[] args) {

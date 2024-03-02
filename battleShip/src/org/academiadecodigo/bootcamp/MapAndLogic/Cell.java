@@ -1,11 +1,11 @@
 package org.academiadecodigo.bootcamp.MapAndLogic;
 
 public class Cell {
-    private String state = " ~";
+    private String state = " ~ ";
     private int y;
     private int x;
     boolean isSet;
-    boolean isChosen;
+    boolean Ship;
     boolean isGuessable;
 
 
@@ -46,12 +46,12 @@ public class Cell {
         isSet = set;
     }
 
-    public boolean isChosen() {
-        return isChosen;
+    public boolean isShip() {
+        return Ship;
     }
 
-    public void setChosen(boolean chosen) {
-        isChosen = chosen;
+    public void setShip(boolean ship) {
+        Ship = ship;
     }
 
     public boolean isGuessable() {
@@ -62,8 +62,4 @@ public class Cell {
         isGuessable = guessable;
     }
 
-    public void setState() {
-
-    }
-
-}
+ }
