@@ -3,6 +3,8 @@ package org.academiadecodigo.bootcamp.game;
 import org.academiadecodigo.bootcamp.MapAndLogic.Map;
 import org.academiadecodigo.bootcamp.server.ClientHandler;
 
+import java.io.IOException;
+
 public class Player {
         private String username;
         private boolean isReady;
@@ -31,7 +33,7 @@ public class Player {
         public ClientHandler getClientHandler(){
             return clientHandler;
         }
-        public void setMap(){
+        public void setMap() throws IOException {
             map=new Map(this);
         }
     }

@@ -41,9 +41,13 @@ public class ClientHandler implements Runnable {
         setName();
         setReady();
         waitForOtherPlayers();
-        player.setMap();
+        try {
+            player.setMap();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("super banana");
-        // metodo para decidir posicao inicial dos barco
+
         //thread para esperar
         //game logic waiting for input == map observer
         //criar class mapobserver que fica encarregue do game
