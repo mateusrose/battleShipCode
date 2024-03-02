@@ -14,6 +14,7 @@ public class Player {
         private ClientHandler clientHandler;
         private int ships = 5;
         private List<ClientHandler> opponent;
+        private int playerNum;
 
     public int getShips() {
         return ships;
@@ -23,7 +24,8 @@ public class Player {
         this.ships = ships;
     }
 
-    public Player(ClientHandler clientHandler){
+    public Player(ClientHandler clientHandler,int playerNum){
+        this.playerNum = playerNum;
             this.clientHandler=clientHandler;
 
         }
@@ -49,8 +51,20 @@ public class Player {
         public void setMap() throws IOException {
             map=new Map(this);
         }
-        public void attack(){
+        public Map getMap(){
+        return map;
+        }
+        public void attack(int x,int y) throws IOException {
         opponent=clientHandler.getServer().getClientList();
+            for (int i = 0; i < opponent.size(); i++) {
+                if (i!=playerNum){
+                    int j = opponent.get(i).getPlayer().getMap().xyToIndex(x,y);
+                    System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
+                    opponent.get(i).getPlayer().getMap().checkCell(x,y);
+                    System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
+                }
+
+            }
 
         }
     }

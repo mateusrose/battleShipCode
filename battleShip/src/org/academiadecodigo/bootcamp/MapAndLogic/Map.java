@@ -75,11 +75,12 @@ public class Map {
 
     public void updateOceanMap() throws IOException {
         gridRepresentation.append("\n");
+
         for (int i = 0; i < numCols; i++) {
             if (i == 0) {
                 gridRepresentation.append("  ");
             }
-            gridRepresentation.append("  ").append(i);
+            gridRepresentation.append("  ");
         }
 
         gridRepresentation.append("\n");
@@ -89,11 +90,15 @@ public class Map {
 
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
+                System.out.println("we here i" + i);
+                System.out.println("we here j" + j);
                 String state = cellList.get(cellCount).getState();
+                System.out.println(cellList.get(cellCount).getState());
+                // gridRepresentation.append(cellList.get(cellCount).getState());
                 if (j == 0) {
                     gridRepresentation.append(i).append("| ").append(state);
                 } else if (j == numRows - 1) {
-                    gridRepresentation.append(state).append(" |").append(i).append("\n");
+                    gridRepresentation.append(state).append(" |").append("\n");
                 } else {
                     gridRepresentation.append(state);
                 }
@@ -112,8 +117,7 @@ public class Map {
         gridRepresentation.append("\n");
         player.getClientHandler().getOutputFromServer().println(gridRepresentation);
         player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
-
-    }
+      }
 
 
     public void deployPlayerShips() throws IOException {
@@ -157,5 +161,20 @@ public class Map {
         return index;
     }
 
+    public void checkCell(int x, int y) throws IOException {
+       Cell cell = cellList.get(xyToIndex(x,y));
+       if(cell.isShip()){
+        cell.setSunk(true);
+        cell.setGuessable(false);
+        cell.setState(" H ");
+       } else if (!cell.isShip()){
+           cell.setGuessable(false);
+           cell.setState(" X ");
+       }
+       updateOceanMap();
+    }
 
+    public LinkedList<Cell> getCellList() {
+        return cellList;
+    }
 }

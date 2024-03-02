@@ -1,6 +1,7 @@
 package org.academiadecodigo.bootcamp.server;
 
 import org.academiadecodigo.bootcamp.Prompt;
+import org.academiadecodigo.bootcamp.client.ImageBoat;
 import org.academiadecodigo.bootcamp.game.Player;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringSetInputScanner;
@@ -18,11 +19,21 @@ public class ClientHandler implements Runnable {
     private Server server;
     private Prompt prompt;
     private Player player;
-    private static final CountDownLatch barrier = new CountDownLatch(2);
+    private static CountDownLatch barrier = new CountDownLatch(2);
     private BufferedReader inputFromServer;
     private PrintStream outputFromServer;
+    private int playerNum;
+    private int loopCounter = 0;
 
-    public ClientHandler(Socket clientSocket, Server server) throws IOException {
+    public void makeBarrier(){
+        if (loopCounter==2) {
+            barrier = new CountDownLatch(2);
+            loopCounter=0;
+        }
+    }
+
+    public ClientHandler(Socket clientSocket, Server server,int playerNum) throws IOException {
+        this.playerNum = playerNum;
         this.clientSocket = clientSocket;
         this.server = server;
         setup();
@@ -31,7 +42,7 @@ public class ClientHandler implements Runnable {
         prompt = new Prompt(clientSocket.getInputStream(), new PrintStream(clientSocket.getOutputStream()));
         inputFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outputFromServer = new PrintStream(clientSocket.getOutputStream());
-        player = new Player(this);
+        player = new Player(this,playerNum);
         outputFromServer.println("BOAT BOAT BOAT BOAT BOAT BOAT");
     }
 
@@ -48,7 +59,11 @@ public class ClientHandler implements Runnable {
         }
         waitForOtherPlayers();
         while(player.getShips()>0){
-            //player choose one to hit
+            try {
+                gameTurn();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             waitForOtherPlayers();
         }
         //thread para esperar
@@ -86,10 +101,13 @@ public class ClientHandler implements Runnable {
 
     public void waitForOtherPlayers() {
         try {
+            makeBarrier();
+            outputFromServer.println(ImageBoat.IMAGE1);
             barrier.countDown();
             outputFromServer.println("Waiting for your opponent");
             barrier.await();
             outputFromServer.println("Please select the positions for your ships");
+            loopCounter++;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -108,6 +126,13 @@ public class ClientHandler implements Runnable {
     }
     public Server getServer(){
         return this.server;
+    }
+    public void gameTurn( ) throws IOException {
+        outputFromServer.println(" Where do you wish to attack? Column: ");
+        int x =Integer.parseInt(inputFromServer.readLine());
+        outputFromServer.println(" Where do you wish to attack? Row: ");
+        int y = Integer.parseInt(inputFromServer.readLine());
+        player.attack(x,y);
     }
 }
 

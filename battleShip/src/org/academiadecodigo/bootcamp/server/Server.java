@@ -16,6 +16,7 @@ public class Server {
     private List<ClientHandler> clientList;
     public static final int DEFAULT_PORT = 9999;
     public static final int MAX_CLIENTS = 2;
+    private int playerCount = 1;
 
 
     private ExecutorService executor;
@@ -36,7 +37,8 @@ public class Server {
 
         clientSocket = socket.accept();
         System.out.println("Client Connected");
-        Thread clientThread = new Thread(clientHandler = new ClientHandler(clientSocket, this));
+        Thread clientThread = new Thread(clientHandler = new ClientHandler(clientSocket, this,playerCount));
+        playerCount++;
         clientList.add(clientHandler);
         executor.submit(clientThread);
         if (clientList.size() == 2) {

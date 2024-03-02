@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp.client;
 
 public class ImageBoat {
-     System.out.println(" \n" +
+     public static final String IMAGE1 = " \n" +
              "                                                            \n" +
              "                         . # ¯¯ + .                          \n" +
              "             -===|¯¯¯¯¯ .  ------  . ¯¯¯¯¯|===-             \n" +
@@ -21,7 +21,7 @@ public class ImageBoat {
              "      \\_                      |                     _/    \n" +
              "         |¯.         |¯.         |¯.         |¯.         |¯.          \n" +
              "-._____|¯  ¯'-.____|¯  ¯'-.____|¯  ¯'-.____|¯  ¯'-.____|¯  ¯'-.__                                                      \n" +
-             "");
+             "";
 
 
 }

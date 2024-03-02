@@ -4,9 +4,9 @@ public class Cell {
     private String state = " ~ ";
     private int y;
     private int x;
-    boolean isSet;
+    boolean isSunk;
     boolean Ship;
-    boolean isGuessable;
+    boolean isGuessable = true;
 
 
     public Cell(int x,int y){
@@ -38,12 +38,12 @@ public class Cell {
         this.x = x;
     }
 
-    public boolean isSet() {
-        return isSet;
+    public boolean isSunk() {
+        return isSunk;
     }
 
-    public void setSet(boolean set) {
-        isSet = set;
+    public void setSunk(boolean sunk) {
+        isSunk = sunk;
     }
 
     public boolean isShip() {
