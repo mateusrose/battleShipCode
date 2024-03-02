@@ -1,7 +1,7 @@
 package org.academiadecodigo.bootcamp.server;
 
 import org.academiadecodigo.bootcamp.Prompt;
-import org.academiadecodigo.bootcamp.client.Player;
+import org.academiadecodigo.bootcamp.game.Player;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringSetInputScanner;
 
@@ -31,7 +31,7 @@ public class ClientHandler implements Runnable {
         prompt = new Prompt(clientSocket.getInputStream(), new PrintStream(clientSocket.getOutputStream()));
         inputFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outputFromServer = new PrintStream(clientSocket.getOutputStream());
-        player = new Player();
+        player = new Player(this);
         outputFromServer.println("BOAT BOAT BOAT BOAT BOAT BOAT");
     }
 
@@ -41,10 +41,13 @@ public class ClientHandler implements Runnable {
         setName();
         setReady();
         waitForOtherPlayers();
+        player.setMap();
         System.out.println("super banana");
         // metodo para decidir posicao inicial dos barco
         //thread para esperar
         //game logic waiting for input == map observer
+        //criar class mapobserver que fica encarregue do game
+        //game tem a logica
     }
 
     public void setName() {
@@ -89,7 +92,12 @@ public class ClientHandler implements Runnable {
         return player;
     }
 
+    public PrintStream getOutputFromServer(){
+        return outputFromServer;
+    }
 
-
+    public BufferedReader getInputFromServer() {
+        return inputFromServer;
+    }
 }
 
