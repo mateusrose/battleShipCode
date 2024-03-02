@@ -32,7 +32,7 @@ public class Map {
             if (i == 0) {
                 gridRepresentation.append("  ");
             }
-            gridRepresentation.append("  ").append(i);
+            gridRepresentation.append("  ");
         }
 
         gridRepresentation.append("\n");
@@ -51,7 +51,7 @@ public class Map {
                 if (j == 0) {
                     gridRepresentation.append(i).append("| ").append(state);
                 } else if (j == numRows - 1) {
-                    gridRepresentation.append(state).append(" |").append(i).append("\n");
+                    gridRepresentation.append(state).append(" |").append("\n");
                 } else {
                     gridRepresentation.append(state);
                 }
@@ -157,8 +157,5 @@ public class Map {
         return index;
     }
 
-    public static void main(String[] args) {
-        // Map map = new Map();
-        // map.deployPlayerShips();
-    }
+
 }
