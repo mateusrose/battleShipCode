@@ -46,8 +46,11 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("super banana");
-
+        waitForOtherPlayers();
+        while(player.getShips()>0){
+            //player choose one to hit
+            waitForOtherPlayers();
+        }
         //thread para esperar
         //game logic waiting for input == map observer
         //criar class mapobserver que fica encarregue do game
@@ -102,6 +105,9 @@ public class ClientHandler implements Runnable {
 
     public BufferedReader getInputFromServer() {
         return inputFromServer;
+    }
+    public Server getServer(){
+        return this.server;
     }
 }
 

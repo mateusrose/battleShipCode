@@ -1,5 +1,7 @@
 package org.academiadecodigo.bootcamp.server;
 
+import org.academiadecodigo.bootcamp.game.Game;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +16,10 @@ public class Server {
     private List<ClientHandler> clientList;
     public static final int DEFAULT_PORT = 9999;
     public static final int MAX_CLIENTS = 2;
+
+
     private ExecutorService executor;
+    private Game game;
 
 
     public Server() throws IOException {
@@ -34,6 +39,10 @@ public class Server {
         Thread clientThread = new Thread(clientHandler = new ClientHandler(clientSocket, this));
         clientList.add(clientHandler);
         executor.submit(clientThread);
+        if (clientList.size() == 2) {
+            game = new Game(this);
+
+        }
 
     }
 
@@ -43,7 +52,9 @@ public class Server {
             waitForConnections();
         }
 
-            //clientListReady todos true -->)
-        }
-
+        //clientListReady todos true -->)
     }
+    public List<ClientHandler> getClientList() {
+        return clientList;
+    }
+}
