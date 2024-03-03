@@ -81,7 +81,7 @@ public class Player {
                     System.out.println(i);
                     System.out.println(playerNum);
 
-                    int j = opponent.get(i).getPlayer().getMap().xyToIndex(x,y);
+                    int j = opponent.get(i).getPlayer().getMap().xyToIndex(opponent.get(i).getPlayer().getMap().getCellList(),x,y);
 
                     System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
 

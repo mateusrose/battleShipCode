@@ -227,10 +227,10 @@ public class Map {
             int y = Integer.parseInt(player.getClientHandler().getInputFromServer().readLine());
             System.out.println(y);
 
-            if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (!cellList.get(xyToIndex(x, y)).isShip())) {
-                cellList.get(xyToIndex(x, y)).setState(" O ");
-                cellList.get(xyToIndex(x, y)).setShip(true);
-            } else if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (cellList.get(xyToIndex(x, y)).isShip()))
+            if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (!cellList.get(xyToIndex(cellList, x, y)).isShip())) {
+                cellList.get(xyToIndex(cellList, x, y)).setState(" O ");
+                cellList.get(xyToIndex(cellList, x, y)).setShip(true);
+            } else if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (cellList.get(xyToIndex(cellList, x, y)).isShip()))
                 player.getClientHandler().getOutputFromServer().println("You can't place two or more ships on the same location");
             else if ((x < 0 || x >= numRows) || (y < 0 || y >= numCols))
                 player.getClientHandler().getOutputFromServer().println("You can't place ships outside the " + numRows + " by " + numCols + " grid");
@@ -240,13 +240,13 @@ public class Map {
 
     public int xyToIndex(LinkedList<Cell> list, int x, int y) {
         int index = 0;
-        for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++) {
-                index++;
-                System.out.println(cellList.get(i));
+        for (Cell cell : list) {
+            if (cell.getX() == x && cell.getY() == y) {
+                return index;
             }
+            index++;
         }
-        return index;
+        return -1;
     }
 
     public LinkedList<Cell> getOpponentCellList() {
@@ -265,8 +265,8 @@ public class Map {
         for (int i = 0; i < 2; i++) {
             if (i != player.getPlayerNum() - 1) {
                 System.out.println("Cell is something" + cell);
-                cell = opponentCellList.get(xyToIndex(x,y));
-                cell2=opponentCellListDiscovered.get(xyToIndex(x,y));
+                cell = opponentCellList.get(xyToIndex(opponentCellList,x,y));
+                cell2=opponentCellListDiscovered.get(xyToIndex(opponentCellListDiscovered,x,y));
                 System.out.println(cell);
                 if (cell.isShip()) {
                     cell.setState(" H ");
