@@ -12,17 +12,14 @@ public class Game {
     ClientHandler player1;
     ClientHandler player2;
     private List<ClientHandler> clientList;
-
     public List<ClientHandler> getClientList() {
         return clientList;
     }
-
     public Game(Server server, ClientHandler player1, ClientHandler player2, List<ClientHandler> clientList) {
         this.clientList=clientList;
         this.player1 = player1;
         this.player2 = player2;
         this.server = server;
-
     }
     public void setMaps(ClientHandler clientHandler){
         clientHandler.getPlayer().getMap().setOpponentCellList(clientHandler.getPlayer().getMap().getCellList());

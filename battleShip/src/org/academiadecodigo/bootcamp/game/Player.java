@@ -40,8 +40,8 @@ public class Player {
         return ships;
     }
 
-    public void setShips(int ships) {
-        this.ships = ships;
+    public void setShips() {
+        this.ships--;
     }
 
     public Player(ClientHandler clientHandler,int playerNum, Game game){

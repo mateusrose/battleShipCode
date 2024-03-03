@@ -32,6 +32,7 @@ public class Map {
         gridRepresentation = new StringBuilder();
     }
     public void opponentPrintMap(){
+        opponentGridRepresentation = new StringBuilder();
         opponentGridRepresentation.append("\n");
 
         for (int i = 0; i < numCols; i++) {
@@ -85,8 +86,8 @@ public class Map {
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
                 opponentCellListDiscovered.add(new Cell(i, j));
-                System.out.println("we here i" + i);
-                System.out.println("we here j" + j);
+
+
                 String state = opponentCellListDiscovered.get(cellCount).getState();
 
                 if (j == 0) {
@@ -127,10 +128,10 @@ public class Map {
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
                 cellList.add(new Cell(i, j));
-                System.out.println("we here i" + i);
-                System.out.println("we here j" + j);
+
+
                 String state = cellList.get(cellCount).getState();
-                System.out.println(cellList.get(cellCount).getState());
+
                 // gridRepresentation.append(cellList.get(cellCount).getState());
                 if (j == 0) {
                     gridRepresentation.append(i).append("| ").append(state);
@@ -176,8 +177,7 @@ public class Map {
 
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
-                System.out.println("we here i" + i);
-                System.out.println("we here j" + j);
+
                 String state = cellList.get(cellCount).getState();
                 System.out.println(cellList.get(cellCount).getState());
                 // gridRepresentation.append(cellList.get(cellCount).getState());
@@ -222,11 +222,11 @@ public class Map {
             player.getClientHandler().getOutputFromServer().println("Enter X coordinate for your " + i + " ship: ");
 
             int x = Integer.parseInt(player.getClientHandler().getInputFromServer().readLine());
-            System.out.println(x);
+
             player.getClientHandler().getOutputFromServer().println("Enter Y coordinate for your " + i + " ship: ");
 
             int y = Integer.parseInt(player.getClientHandler().getInputFromServer().readLine());
-            System.out.println(y);
+
 
             if ((x >= 0 && x < numRows) && (y >= 0 && y < numCols) && (!cellList.get(xyToIndex(cellList, x, y)).isShip())) {
                 cellList.get(xyToIndex(cellList, x, y)).setState(" O ");
@@ -297,7 +297,8 @@ public class Map {
                         cell2.setState(" H ");
                         cell2.setSunk(true);
                         cell2.setGuessable(false);
-                        player.getOpponent().get(i).getPlayer().setShips(-1);
+                        player.getOpponent().get(i).getPlayer().setShips();
+
 
                     } else if(!cell.isShip()){
                         outPutStream.println("__   _____  _   _   __  __ ___ ____ ____  _____ ____    _____ _   _ _____ \n" +
