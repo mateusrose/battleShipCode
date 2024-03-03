@@ -23,9 +23,12 @@ public class Map {
         printOceanMap();
         deployPlayerShips();
     }
-
+    public void setGridRepresentation(){
+        gridRepresentation=new StringBuilder();
+    }
 
     public void printOceanMap() throws IOException {
+        setGridRepresentation();
         gridRepresentation.append("\n");
 
         for (int i = 0; i < numCols; i++) {
@@ -74,17 +77,18 @@ public class Map {
     }
 
     public void updateOceanMap() throws IOException {
-        gridRepresentation.append("\n");
+        StringBuilder mapRepresentation = new StringBuilder();
+        mapRepresentation.append("\n");
 
         for (int i = 0; i < numCols; i++) {
             if (i == 0) {
-                gridRepresentation.append("  ");
+                mapRepresentation.append("  ");
             }
-            gridRepresentation.append("  ");
+            mapRepresentation.append("  ");
         }
 
-        gridRepresentation.append("\n");
-        gridRepresentation.append("\n");
+        mapRepresentation.append("\n");
+        mapRepresentation.append("\n");
 
         int cellCount = 0;
 
@@ -96,26 +100,26 @@ public class Map {
                 System.out.println(cellList.get(cellCount).getState());
                 // gridRepresentation.append(cellList.get(cellCount).getState());
                 if (j == 0) {
-                    gridRepresentation.append(i).append("| ").append(state);
+                    mapRepresentation.append(i).append("| ").append(state);
                 } else if (j == numRows - 1) {
-                    gridRepresentation.append(state).append(" |").append("\n");
+                    mapRepresentation.append(state).append(" |").append("\n");
                 } else {
-                    gridRepresentation.append(state);
+                    mapRepresentation.append(state);
                 }
                 cellCount++;
             }
-            gridRepresentation.append("\n");
+            mapRepresentation.append("\n");
         }
         //Last section of Ocean Map
-        gridRepresentation.append(" ");
+        mapRepresentation.append(" ");
         for (int i = 0; i < numCols; i++) {
             if (i == 0) {
-                gridRepresentation.append(" ");
+                mapRepresentation.append(" ");
             }
-            gridRepresentation.append("  ").append(i);
+            mapRepresentation.append("  ").append(i);
         }
-        gridRepresentation.append("\n");
-        player.getClientHandler().getOutputFromServer().println(gridRepresentation);
+        mapRepresentation.append("\n");
+        player.getClientHandler().getOutputFromServer().println(mapRepresentation);
         player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
       }
 
@@ -153,9 +157,10 @@ public class Map {
 
     public int xyToIndex(int x, int y) {
         int index = 0;
-        for (int i = 0; i < x; i++) {
+        for (int i = 0; i < x ; i++) {
             for (int j = 0; j < y; j++) {
                 index++;
+                System.out.println(cellList.get(i));
             }
         }
         return index;
@@ -167,7 +172,7 @@ public class Map {
         cell.setSunk(true);
         cell.setGuessable(false);
         cell.setState(" H ");
-       } else if (!cell.isShip()){
+       } else{
            cell.setGuessable(false);
            cell.setState(" X ");
        }

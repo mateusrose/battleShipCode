@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 public class Server {
     ServerSocket socket;
@@ -17,7 +18,7 @@ public class Server {
     public static final int DEFAULT_PORT = 9999;
     public static final int MAX_CLIENTS = 2;
     private int playerCount = 1;
-
+    private Semaphore turnSempahore;
 
     private ExecutorService executor;
     private Game game;
@@ -27,6 +28,7 @@ public class Server {
         clientList = new LinkedList<>();
         socket = new ServerSocket(DEFAULT_PORT);
         executor = Executors.newFixedThreadPool(2);
+        turnSempahore=new Semaphore(1);
         System.out.println("Server Started");
     }
 
@@ -37,19 +39,22 @@ public class Server {
 
         clientSocket = socket.accept();
         System.out.println("Client Connected");
-        Thread clientThread = new Thread(clientHandler = new ClientHandler(clientSocket, this,playerCount));
+        Thread clientThread = new Thread(clientHandler = new ClientHandler(clientSocket, this,playerCount, turnSempahore));
         playerCount++;
         clientList.add(clientHandler);
         executor.submit(clientThread);
         if (clientList.size() == 2) {
-            game = new Game(this);
+            game = new Game(this, clientList.get(0),clientList.get(1));
+         //   game.init();
+
+
+
 
         }
 
     }
 
     public void start() throws IOException {
-
         while (clientList.size() < MAX_CLIENTS) {
             waitForConnections();
         }

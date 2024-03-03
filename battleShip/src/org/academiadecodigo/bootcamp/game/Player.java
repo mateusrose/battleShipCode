@@ -15,6 +15,15 @@ public class Player {
         private int ships = 5;
         private List<ClientHandler> opponent;
         private int playerNum;
+        private boolean playing;
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
 
     public int getShips() {
         return ships;
@@ -58,6 +67,8 @@ public class Player {
         opponent=clientHandler.getServer().getClientList();
             for (int i = 0; i < opponent.size(); i++) {
                 if (i!=playerNum){
+                    System.out.println(i);
+                    System.out.println(playerNum);
                     int j = opponent.get(i).getPlayer().getMap().xyToIndex(x,y);
                     System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
                     opponent.get(i).getPlayer().getMap().checkCell(x,y);
