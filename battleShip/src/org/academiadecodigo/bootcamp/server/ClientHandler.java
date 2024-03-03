@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp.server;
 
 import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.client.ImageBoat;
+import org.academiadecodigo.bootcamp.game.Game;
 import org.academiadecodigo.bootcamp.game.Player;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringSetInputScanner;
@@ -29,20 +30,24 @@ public class ClientHandler implements Runnable {
     private int playerNum;
     private int loopCounter = 0;
     private boolean gameStarted = false;
+    private Game game;
 
     public ClientHandler(Socket clientSocket, Server server, int playerNum, Semaphore turnSemaphore) throws IOException {
+
         this.playerNum = playerNum;
         this.turnSemaphore=turnSemaphore;
         this.clientSocket = clientSocket;
         this.server = server;
         setup();
     }
-
+    public void setGame(Game game){
+        this.game=game;
+    }
     public void setup() throws IOException {
         prompt = new Prompt(clientSocket.getInputStream(), new PrintStream(clientSocket.getOutputStream()));
         inputFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outputFromServer = new PrintStream(clientSocket.getOutputStream());
-        player = new Player(this, playerNum);
+        player = new Player(this, playerNum,game);
         outputFromServer.println("BOAT BOAT BOAT BOAT BOAT BOAT");
     }
 
@@ -56,8 +61,10 @@ public class ClientHandler implements Runnable {
         try {
             player.setMap();
             waitForOtherPlayers();
+            game.setMaps();
             gameStarted = true;
             player.setPlaying(true);
+         //   player.getMap().opponentPrintOceanMap();
             while (gameStarted) {
                 waitGameTurn();
                 gameTurn();

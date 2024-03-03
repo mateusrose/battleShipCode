@@ -13,20 +13,103 @@ public class Map {
     private int playerShips;
     private Player player;
     private LinkedList<Cell> cellList;
-    private int[][] missedguesses = new int[numRows][numCols];
+    private LinkedList<Cell> opponentCellList;
+    private LinkedList<Cell> opponentCellListDiscovered;
     StringBuilder gridRepresentation = new StringBuilder();
-
+    StringBuilder opponentGridRepresentation= new StringBuilder();
 
     public Map(Player player) throws IOException {
         this.player = player;
         cellList = new LinkedList<>();
+        opponentCellListDiscovered = new LinkedList<>();
         printOceanMap();
         deployPlayerShips();
+        opponentPrintOceanMap();
     }
-    public void setGridRepresentation(){
-        gridRepresentation=new StringBuilder();
+    public void setGridRepresentation() {
+        gridRepresentation = new StringBuilder();
     }
+    public void opponentPrintMap(){
+        opponentGridRepresentation.append("\n");
 
+        for (int i = 0; i < numCols; i++) {
+            if (i == 0) {
+                opponentGridRepresentation.append("  ");
+            }
+            opponentGridRepresentation.append("  ");
+        }
+        opponentGridRepresentation.append("\n");
+        opponentGridRepresentation.append("\n");
+        int cellCount = 0;
+        for (int i = 0; i < numCols; i++) {
+            for (int j = 0; j < numRows; j++) {
+                String state = cellList.get(cellCount).getState();
+                if (j == 0) {
+                    opponentGridRepresentation.append(i).append("| ").append(state);
+                } else if (j == numRows - 1) {
+                    opponentGridRepresentation.append(state).append(" |").append("\n");
+                } else {
+                    opponentGridRepresentation.append(state);
+                }
+                cellCount++;
+            }
+            opponentGridRepresentation.append("\n");
+        }
+        //Last section of Ocean Map
+        opponentGridRepresentation.append(" ");
+        for (int i = 0; i < numCols; i++) {
+            if (i == 0) {
+                opponentGridRepresentation.append(" ");
+            }
+            opponentGridRepresentation.append("  ").append(i);
+        }
+        opponentGridRepresentation.append("\n");
+        player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
+        player.getClientHandler().getOutputFromServer().println(gridRepresentation);
+    }
+    public void opponentPrintOceanMap() throws IOException {
+        opponentGridRepresentation = new StringBuilder();
+        opponentGridRepresentation.append("\n");
+
+        for (int i = 0; i < numCols; i++) {
+            if (i == 0) {
+                opponentGridRepresentation.append("  ");
+            }
+            opponentGridRepresentation.append("  ");
+        }
+        opponentGridRepresentation.append("\n");
+        opponentGridRepresentation.append("\n");
+        int cellCount = 0;
+        for (int i = 0; i < numCols; i++) {
+            for (int j = 0; j < numRows; j++) {
+                opponentCellListDiscovered.add(new Cell(i, j));
+                System.out.println("we here i" + i);
+                System.out.println("we here j" + j);
+                String state = cellList.get(cellCount).getState();
+
+                if (j == 0) {
+                    opponentGridRepresentation.append(i).append("| ").append(state);
+                } else if (j == numRows - 1) {
+                    opponentGridRepresentation.append(state).append(" |").append("\n");
+                } else {
+                    opponentGridRepresentation.append(state);
+                }
+                cellCount++;
+            }
+            opponentGridRepresentation.append("\n");
+        }
+        //Last section of Ocean Map
+        opponentGridRepresentation.append(" ");
+        for (int i = 0; i < numCols; i++) {
+            if (i == 0) {
+                opponentGridRepresentation.append(" ");
+            }
+            opponentGridRepresentation.append("  ").append(i);
+        }
+        opponentGridRepresentation.append("\n");
+        player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
+
+    }
     public void printOceanMap() throws IOException {
         setGridRepresentation();
         gridRepresentation.append("\n");
@@ -121,7 +204,7 @@ public class Map {
         mapRepresentation.append("\n");
         player.getClientHandler().getOutputFromServer().println(mapRepresentation);
         player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
-      }
+    }
 
 
     public void deployPlayerShips() throws IOException {
@@ -155,9 +238,9 @@ public class Map {
         updateOceanMap();
     }
 
-    public int xyToIndex(int x, int y) {
+    public int xyToIndex(LinkedList<Cell> list, int x, int y) {
         int index = 0;
-        for (int i = 0; i < x ; i++) {
+        for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 index++;
                 System.out.println(cellList.get(i));
@@ -166,17 +249,43 @@ public class Map {
         return index;
     }
 
+    public LinkedList<Cell> getOpponentCellList() {
+        return opponentCellList;
+    }
+
+    public void setOpponentCellList(LinkedList<Cell> opponentCellList) {
+        this.opponentCellList = opponentCellList;
+    }
+
+
+
     public void checkCell(int x, int y) throws IOException {
-       Cell cell = cellList.get(xyToIndex(x,y));
-       if(cell.isShip()){
-        cell.setSunk(true);
-        cell.setGuessable(false);
-        cell.setState(" H ");
-       } else{
-           cell.setGuessable(false);
-           cell.setState(" X ");
-       }
-       updateOceanMap();
+        Cell cell=null;
+        Cell cell2=null;
+        for (int i = 0; i < 2; i++) {
+            if (i != player.getPlayerNum() - 1) {
+                System.out.println("Cell is something" + cell);
+                cell = opponentCellList.get(xyToIndex(x,y));
+                cell2=opponentCellListDiscovered.get(xyToIndex(x,y));
+                System.out.println(cell);
+                if (cell.isShip()) {
+                    cell.setState(" H ");
+                    cell.setSunk(true);
+                    cell.setGuessable(false);
+                    cell2.setState(" H ");
+                    cell2.setSunk(true);
+                    cell2.setGuessable(false);
+                } else {
+                    cell.setGuessable(false);
+                    cell.setState(" X ");
+                    cell2.setGuessable(false);
+                    cell2.setState(" X ");
+                }
+            }
+            updateOceanMap();
+            opponentPrintMap();
+        }
+
     }
 
     public LinkedList<Cell> getCellList() {

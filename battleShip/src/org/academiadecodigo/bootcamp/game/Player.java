@@ -16,6 +16,15 @@ public class Player {
         private List<ClientHandler> opponent;
         private int playerNum;
         private boolean playing;
+        private Game game;
+
+    public Game getGame() {
+        return game;
+    }
+
+    public int getPlayerNum() {
+        return playerNum;
+    }
 
     public boolean isPlaying() {
         return playing;
@@ -33,7 +42,8 @@ public class Player {
         this.ships = ships;
     }
 
-    public Player(ClientHandler clientHandler,int playerNum){
+    public Player(ClientHandler clientHandler,int playerNum, Game game){
+        this.game=game;
         this.playerNum = playerNum;
             this.clientHandler=clientHandler;
 
@@ -67,11 +77,16 @@ public class Player {
         opponent=clientHandler.getServer().getClientList();
             for (int i = 0; i < opponent.size(); i++) {
                 if (i!=playerNum){
+
                     System.out.println(i);
                     System.out.println(playerNum);
+
                     int j = opponent.get(i).getPlayer().getMap().xyToIndex(x,y);
+
                     System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
+
                     opponent.get(i).getPlayer().getMap().checkCell(x,y);
+
                     System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
                 }
 

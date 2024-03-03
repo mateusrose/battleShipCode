@@ -44,7 +44,9 @@ public class Server {
         clientList.add(clientHandler);
         executor.submit(clientThread);
         if (clientList.size() == 2) {
-            game = new Game(this, clientList.get(0),clientList.get(1));
+            game = new Game(this, clientList.get(0),clientList.get(1),clientList);
+            clientList.get(0).setGame(game);
+            clientList.get(1).setGame(game);
          //   game.init();
 
 
