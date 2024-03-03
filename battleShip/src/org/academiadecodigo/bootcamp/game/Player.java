@@ -5,6 +5,8 @@ import org.academiadecodigo.bootcamp.MapAndLogic.Map;
 import org.academiadecodigo.bootcamp.server.ClientHandler;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 public class Player {
@@ -73,21 +75,15 @@ public class Player {
         public Map getMap(){
         return map;
         }
-        public void attack(int x,int y) throws IOException {
+        public void attack(int x, int y, PrintStream outputStream) throws IOException {
         opponent=clientHandler.getServer().getClientList();
             for (int i = 0; i < opponent.size(); i++) {
                 if (i!=playerNum){
 
-                    System.out.println(i);
-                    System.out.println(playerNum);
-
                     int j = opponent.get(i).getPlayer().getMap().xyToIndex(opponent.get(i).getPlayer().getMap().getCellList(),x,y);
 
-                    System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
+                    opponent.get(i).getPlayer().getMap().checkCell(x,y,outputStream);
 
-                    opponent.get(i).getPlayer().getMap().checkCell(x,y);
-
-                    System.out.printf("", opponent.get(i).getPlayer().getMap().getCellList().get(j).isSunk());
                 }
 
             }

@@ -31,29 +31,32 @@ public class ClientHandler implements Runnable {
     private int loopCounter = 0;
     private boolean gameStarted = false;
     private Game game;
+    boolean hasWaited;
 
     public ClientHandler(Socket clientSocket, Server server, int playerNum, Semaphore turnSemaphore) throws IOException {
 
         this.playerNum = playerNum;
-        this.turnSemaphore=turnSemaphore;
+        this.turnSemaphore = turnSemaphore;
         this.clientSocket = clientSocket;
         this.server = server;
         setup();
     }
-    public void setGame(Game game){
-        this.game=game;
+
+    public void setGame(Game game) {
+        this.game = game;
     }
+
     public void setup() throws IOException {
         prompt = new Prompt(clientSocket.getInputStream(), new PrintStream(clientSocket.getOutputStream()));
         inputFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outputFromServer = new PrintStream(clientSocket.getOutputStream());
-        player = new Player(this, playerNum,game);
+        player = new Player(this, playerNum, game);
         outputFromServer.println("BOAT BOAT BOAT BOAT BOAT BOAT");
     }
 
     //client
     @Override
-    public void run() {
+    public synchronized void run() {
         System.out.println("Running" + Thread.currentThread());
         setName();
         setReady();
@@ -64,18 +67,21 @@ public class ClientHandler implements Runnable {
             game.setMaps();
             gameStarted = true;
             player.setPlaying(true);
-         //   player.getMap().opponentPrintOceanMap();
+            //   player.getMap().opponentPrintOceanMap();
             while (gameStarted) {
-                waitGameTurn();
-                gameTurn();
-
+                bestGame();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void setName() {
+    public void bestGame() throws IOException {
+        waitGameTurn();
+        gameTurn();
+    }
+
+    public synchronized void setName() {
         StringInputScanner getName = new StringInputScanner();
         getName.setMessage("Please enter your username: ");
         String name = prompt.getUserInput(getName);
@@ -84,7 +90,7 @@ public class ClientHandler implements Runnable {
 
     }
 
-    public void setReady() {
+    public synchronized void setReady() {
         HashSet<String> isReadyOptions = new HashSet<>();
 
         isReadyOptions.add("y");
@@ -97,7 +103,7 @@ public class ClientHandler implements Runnable {
         isReady.setError("Please confirm you are ready to play");
 
         String readyAnswer = prompt.getUserInput(isReady);
-        if (readyAnswer.contains("y") || readyAnswer.contains("Y") ) {
+        if (readyAnswer.contains("y") || readyAnswer.contains("Y")) {
             player.setReady(true);
             System.out.println(player.isReady());
 
@@ -116,14 +122,21 @@ public class ClientHandler implements Runnable {
             throw new RuntimeException(e);
         }
     }
-    public void waitGameTurn(){
+
+
+    public void waitGameTurn() {
         try {
-            outputFromServer.println("Waiting for other players...");
-            turnSemaphore.acquire(); // Acquire the semaphore to wait for the turn
+            if (!hasWaited) {
+                outputFromServer.println("Waiting for other players...");
+                turnSemaphore.acquire();
+                hasWaited = true;
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        hasWaited = false;
     }
+
     public Player getPlayer() {
         return player;
     }
@@ -145,7 +158,7 @@ public class ClientHandler implements Runnable {
         int x = Integer.parseInt(inputFromServer.readLine());
         outputFromServer.println("Where do you wish to attack? Row: ");
         int y = Integer.parseInt(inputFromServer.readLine());
-        player.attack(x, y);
+        player.attack(x, y, outputFromServer);
         turnSemaphore.release();
     }
 }

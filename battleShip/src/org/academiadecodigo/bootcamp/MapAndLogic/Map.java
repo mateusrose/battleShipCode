@@ -3,6 +3,7 @@ package org.academiadecodigo.bootcamp.MapAndLogic;
 import org.academiadecodigo.bootcamp.game.Player;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -43,7 +44,7 @@ public class Map {
         int cellCount = 0;
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
-                String state = cellList.get(cellCount).getState();
+                String state = opponentCellListDiscovered.get(cellCount).getState();
                 if (j == 0) {
                     opponentGridRepresentation.append(i).append("| ").append(state);
                 } else if (j == numRows - 1) {
@@ -64,8 +65,8 @@ public class Map {
             opponentGridRepresentation.append("  ").append(i);
         }
         opponentGridRepresentation.append("\n");
-        player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
-        player.getClientHandler().getOutputFromServer().println(gridRepresentation);
+        player.getClientHandler().getOutputFromServer().println("\n ONDAS ONDAS ONDAS ONDAS ONDAS ONADS ONDAS");
+        player.getClientHandler().getOutputFromServer().println(opponentGridRepresentation);
     }
     public void opponentPrintOceanMap() throws IOException {
         opponentGridRepresentation = new StringBuilder();
@@ -85,7 +86,7 @@ public class Map {
                 opponentCellListDiscovered.add(new Cell(i, j));
                 System.out.println("we here i" + i);
                 System.out.println("we here j" + j);
-                String state = cellList.get(cellCount).getState();
+                String state = opponentCellListDiscovered.get(cellCount).getState();
 
                 if (j == 0) {
                     opponentGridRepresentation.append(i).append("| ").append(state);
@@ -107,7 +108,7 @@ public class Map {
             opponentGridRepresentation.append("  ").append(i);
         }
         opponentGridRepresentation.append("\n");
-        player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
+        player.getClientHandler().getOutputFromServer().println("\n ONDAS ONDAS ONDAS ONDAS ONDASD ONADASD ONASD");
 
     }
     public void printOceanMap() throws IOException {
@@ -120,12 +121,9 @@ public class Map {
             }
             gridRepresentation.append("  ");
         }
-
         gridRepresentation.append("\n");
         gridRepresentation.append("\n");
-
         int cellCount = 0;
-
         for (int i = 0; i < numCols; i++) {
             for (int j = 0; j < numRows; j++) {
                 cellList.add(new Cell(i, j));
@@ -259,33 +257,37 @@ public class Map {
 
 
 
-    public void checkCell(int x, int y) throws IOException {
-        Cell cell=null;
-        Cell cell2=null;
+    public void checkCell(int x, int y, PrintStream outPutStream) throws IOException {
+        Cell cell = null;
+        Cell cell2 = null;
         for (int i = 0; i < 2; i++) {
             if (i != player.getPlayerNum() - 1) {
                 System.out.println("Cell is something" + cell);
-                cell = opponentCellList.get(xyToIndex(opponentCellList,x,y));
-                cell2=opponentCellListDiscovered.get(xyToIndex(opponentCellListDiscovered,x,y));
-                System.out.println(cell);
-                if (cell.isShip()) {
-                    cell.setState(" H ");
-                    cell.setSunk(true);
-                    cell.setGuessable(false);
-                    cell2.setState(" H ");
-                    cell2.setSunk(true);
-                    cell2.setGuessable(false);
-                } else {
-                    cell.setGuessable(false);
-                    cell.setState(" X ");
-                    cell2.setGuessable(false);
-                    cell2.setState(" X ");
+                int index = xyToIndex(opponentCellList, x, y);
+                if (index != -1) {
+                    cell = opponentCellList.get(index);
+                    cell2 = opponentCellListDiscovered.get(index);
+                    System.out.println(cell);
+                    if (cell.isShip()) {
+                        outPutStream.println("YOU HAVE HIT A TARGET MY FRIEND");
+                        cell.setState(" H ");
+                        cell.setSunk(true);
+                        cell.setGuessable(false);
+                        cell2.setState(" H ");
+                        cell2.setSunk(true);
+                        cell2.setGuessable(false);
+                    } else if(!cell.isShip()){
+                        outPutStream.println("YOU HAVE FAILED TO HIT THE TARGET, GOOD LUCK");
+                        cell.setGuessable(false);
+                        cell.setState(" X ");
+                        cell2.setGuessable(false);
+                        cell2.setState(" X ");
+                    }
                 }
             }
-            updateOceanMap();
-            opponentPrintMap();
         }
-
+        updateOceanMap();
+        opponentPrintMap();
     }
 
     public LinkedList<Cell> getCellList() {
