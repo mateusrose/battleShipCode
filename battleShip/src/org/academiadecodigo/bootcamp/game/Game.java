@@ -24,9 +24,8 @@ public class Game {
         this.server = server;
 
     }
-    public void setMaps(){
-        player1.getPlayer().getMap().setOpponentCellList(player2.getPlayer().getMap().getCellList());
-        player2.getPlayer().getMap().setOpponentCellList(player1.getPlayer().getMap().getCellList());
+    public void setMaps(ClientHandler clientHandler){
+        clientHandler.getPlayer().getMap().setOpponentCellList(clientHandler.getPlayer().getMap().getCellList());
     }
     public void init() {
         while (player1.getPlayer().getShips() > 0 && player2.getPlayer().getShips() > 0) {

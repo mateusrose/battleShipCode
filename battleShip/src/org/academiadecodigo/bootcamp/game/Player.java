@@ -89,5 +89,9 @@ public class Player {
             }
 
         }
+
+    public List<ClientHandler> getOpponent() {
+        return opponent;
     }
+}
 

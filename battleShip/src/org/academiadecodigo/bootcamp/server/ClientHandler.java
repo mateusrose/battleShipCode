@@ -2,6 +2,7 @@ package org.academiadecodigo.bootcamp.server;
 
 import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.client.ImageBoat;
+import org.academiadecodigo.bootcamp.client.Images;
 import org.academiadecodigo.bootcamp.game.Game;
 import org.academiadecodigo.bootcamp.game.Player;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
@@ -47,11 +48,11 @@ public class ClientHandler implements Runnable {
     }
 
     public void setup() throws IOException {
-        prompt = new Prompt(clientSocket.getInputStream(), new PrintStream(clientSocket.getOutputStream()));
+        prompt = new Prompt(clientSocket.getInputStream(), new PrintStream(clientSocket.getOutputStream(),true));
         inputFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        outputFromServer = new PrintStream(clientSocket.getOutputStream());
+        outputFromServer = new PrintStream(clientSocket.getOutputStream(),true);
         player = new Player(this, playerNum, game);
-        outputFromServer.println("BOAT BOAT BOAT BOAT BOAT BOAT");
+        outputFromServer.println(Images.wierdBoat);
     }
 
     //client
@@ -64,12 +65,20 @@ public class ClientHandler implements Runnable {
         try {
             player.setMap();
             waitForOtherPlayers();
-            game.setMaps();
+            game.setMaps(this);
             gameStarted = true;
             player.setPlaying(true);
             //   player.getMap().opponentPrintOceanMap();
             while (gameStarted) {
                 bestGame();
+                if (player.getShips()<=0){
+                    player.getClientHandler().getOutputFromServer().println("  ____    _    __  __ _____    _____     _______ ____  _ _ _ \n" +
+                            " / ___|  / \\  |  \\/  | ____|  / _ \\ \\   / / ____|  _ \\| | | |\n" +
+                            "| |  _  / _ \\ | |\\/| |  _|   | | | \\ \\ / /|  _| | |_) | | | |\n" +
+                            "| |_| |/ ___ \\| |  | | |___  | |_| |\\ V / | |___|  _ <|_|_|_|\n" +
+                            " \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_(_|_|_)");
+                    System.exit(1);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -99,7 +108,12 @@ public class ClientHandler implements Runnable {
         isReadyOptions.add("Y");
 
         StringSetInputScanner isReady = new StringSetInputScanner(isReadyOptions);
-        isReady.setMessage("Are you ready to sink some ships? (yes/no)\nAnswer: ");
+        isReady.setMessage("                           _\n" +
+                "                          (_)\n" +
+                "           --\"\"-------   0/      ^^\n" +
+                " .___...../ /__| |__\\ \\_/H__,      ^^\n" +
+                "  \\                        /\n" +
+                "#####^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~\\O/~~\\Q/~^~^~rr"+"\nAre you ready to sink some ships? (yes/no)\nAnswer: ");
         isReady.setError("Please confirm you are ready to play");
 
         String readyAnswer = prompt.getUserInput(isReady);
@@ -113,7 +127,6 @@ public class ClientHandler implements Runnable {
     public void waitForOtherPlayers() {
         try {
             System.out.println("waiting" + Thread.currentThread());
-            outputFromServer.println(ImageBoat.IMAGE1);
             outputFromServer.println("Waiting for your opponent");
             barrier.await();
             outputFromServer.println("Both players ready to roll!");
@@ -161,5 +174,6 @@ public class ClientHandler implements Runnable {
         player.attack(x, y, outputFromServer);
         turnSemaphore.release();
     }
+
 }
 

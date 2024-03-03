@@ -1,5 +1,6 @@
 package org.academiadecodigo.bootcamp.MapAndLogic;
 
+import org.academiadecodigo.bootcamp.client.Images;
 import org.academiadecodigo.bootcamp.game.Player;
 
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class Map {
             opponentGridRepresentation.append("  ").append(i);
         }
         opponentGridRepresentation.append("\n");
-        player.getClientHandler().getOutputFromServer().println("\n ONDAS ONDAS ONDAS ONDAS ONDAS ONADS ONDAS");
+        player.getClientHandler().getOutputFromServer().println(Images.IMAGE3);
         player.getClientHandler().getOutputFromServer().println(opponentGridRepresentation);
     }
     public void opponentPrintOceanMap() throws IOException {
@@ -108,7 +109,6 @@ public class Map {
             opponentGridRepresentation.append("  ").append(i);
         }
         opponentGridRepresentation.append("\n");
-        player.getClientHandler().getOutputFromServer().println("\n ONDAS ONDAS ONDAS ONDAS ONDASD ONADASD ONASD");
 
     }
     public void printOceanMap() throws IOException {
@@ -152,8 +152,9 @@ public class Map {
             gridRepresentation.append("  ").append(i);
         }
         gridRepresentation.append("\n");
+        player.getClientHandler().getOutputFromServer().println(Images.IMAGE3);
         player.getClientHandler().getOutputFromServer().println(gridRepresentation);
-        player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
+
 
     }
 
@@ -200,15 +201,17 @@ public class Map {
             mapRepresentation.append("  ").append(i);
         }
         mapRepresentation.append("\n");
+        player.getClientHandler().getOutputFromServer().println(" ____  _        _ __   _______ ____    __  __    _    ____  \n" +
+                "|  _ \\| |      / \\\\ \\ / / ____|  _ \\  |  \\/  |  / \\  |  _ \\ \n" +
+                "| |_) | |     / _ \\\\ V /|  _| | |_) | | |\\/| | / _ \\ | |_) |\n" +
+                "|  __/| |___ / ___ \\| | | |___|  _ <  | |  | |/ ___ \\|  __/ \n" +
+                "|_|   |_____/_/   \\_\\_| |_____|_| \\_\\ |_|  |_/_/   \\_\\_|    ");
         player.getClientHandler().getOutputFromServer().println(mapRepresentation);
-        player.getClientHandler().getOutputFromServer().println("\n BANANAAAAAAAAAAAAAAAA");
     }
 
 
     public void deployPlayerShips() throws IOException {
         //  Scanner input = new Scanner(System.in);
-
-        player.getClientHandler().getOutputFromServer().println("\nDeploy your ships:");
 
         //Deploying five ships for player
 
@@ -233,7 +236,9 @@ public class Map {
             else if ((x < 0 || x >= numRows) || (y < 0 || y >= numCols))
                 player.getClientHandler().getOutputFromServer().println("You can't place ships outside the " + numRows + " by " + numCols + " grid");
         }
+        player.getClientHandler().getOutputFromServer().println(Images.SUBMARINE+"\nDeploy your ships:\n"+Images.DESTROYER);
         updateOceanMap();
+
     }
 
     public int xyToIndex(LinkedList<Cell> list, int x, int y) {
@@ -268,16 +273,46 @@ public class Map {
                     cell = opponentCellList.get(index);
                     cell2 = opponentCellListDiscovered.get(index);
                     System.out.println(cell);
-                    if (cell.isShip()) {
-                        outPutStream.println("YOU HAVE HIT A TARGET MY FRIEND");
+                    if(!cell.isGuessable()){
+                        return;
+                    }
+                    else if (cell.isShip()) {
+
+                        outPutStream.println(Images.SMALLSHIP+"\n__   _____  _   _   _   _    ___     _______   _   _ ___ _____      _    \n" +
+                                "\\ \\ / / _ \\| | | | | | | |  / \\ \\   / / ____| | | | |_ _|_   _|    / \\   \n" +
+                                " \\ V / | | | | | | | |_| | / _ \\ \\ / /|  _|   | |_| || |  | |     / _ \\  \n" +
+                                "  | || |_| | |_| | |  _  |/ ___ \\ V / | |___  |  _  || |  | |    / ___ \\ \n" +
+                                " _|_|_\\___/ \\___/  |_|_|_/_/__ \\_\\_/  |_____| |_| |_|___| |_|   /_/   \\_\\\n" +
+                                "|_   _|/ \\  |  _ \\ / ___| ____|_   _|                                    \n" +
+                                "  | | / _ \\ | |_) | |  _|  _|   | |                                      \n" +
+                                "  | |/ ___ \\|  _ <| |_| | |___  | |_ _ _                                 \n" +
+                                " _|_/_/   \\_\\_|_\\_\\\\____|_____| |_(_|_|_)  __ _ _ _                      \n" +
+                                "| |/ /   / \\  | __ ) / _ \\ / _ \\ / _ \\|  \\/  | | | |                     \n" +
+                                "| ' /   / _ \\ |  _ \\| | | | | | | | | | |\\/| | | | |                     \n" +
+                                "| . \\  / ___ \\| |_) | |_| | |_| | |_| | |  | |_|_|_|                     \n" +
+                                "|_|\\_\\/_/   \\_\\____/ \\___/ \\___/ \\___/|_|  |_(_|_|_)                     \n"+Images.EXPLOSION);
                         cell.setState(" H ");
                         cell.setSunk(true);
                         cell.setGuessable(false);
                         cell2.setState(" H ");
                         cell2.setSunk(true);
                         cell2.setGuessable(false);
+                        player.getOpponent().get(i).getPlayer().setShips(-1);
+
                     } else if(!cell.isShip()){
-                        outPutStream.println("YOU HAVE FAILED TO HIT THE TARGET, GOOD LUCK");
+                        outPutStream.println("__   _____  _   _   __  __ ___ ____ ____  _____ ____    _____ _   _ _____ \n" +
+                                "\\ \\ / / _ \\| | | | |  \\/  |_ _/ ___/ ___|| ____|  _ \\  |_   _| | | | ____|\n" +
+                                " \\ V / | | | | | | | |\\/| || |\\___ \\___ \\|  _| | | | |   | | | |_| |  _|  \n" +
+                                "  | || |_| | |_| | | |  | || | ___) |__) | |___| |_| |   | | |  _  | |___ \n" +
+                                " _|_|_\\___/ \\___/  |_|__|_|___|____/____/|_____|____/ _  |_| |_| |_|_____|\n" +
+                                "|_   _|/ \\  |  _ \\ / ___| ____|_   _| \\ \\ / / _ \\| | | |                  \n" +
+                                "  | | / _ \\ | |_) | |  _|  _|   | |    \\ V / | | | | | |                  \n" +
+                                "  | |/ ___ \\|  _ <| |_| | |___  | |_    | || |_| | |_| |                  \n" +
+                                " _|_/_/_  \\_\\_|_\\_\\\\____|_____| |_( )   |_| \\___/ \\___/                   \n" +
+                                "/ ___|| | | |/ ___| |/ / |        |/                                      \n" +
+                                "\\___ \\| | | | |   | ' /| |                                                \n" +
+                                " ___) | |_| | |___| . \\|_|                                                \n" +
+                                "|____/ \\___/ \\____|_|\\_(_)                                                \n"+ Images.IMAGE3);
                         cell.setGuessable(false);
                         cell.setState(" X ");
                         cell2.setGuessable(false);
